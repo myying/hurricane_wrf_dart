@@ -87,7 +87,10 @@ EOF
 
   ### make a run file for wrfvar
   $REMOVE gen_pert_${n}.csh
-  cat >> gen_pert_${n}.csh << EOF
+
+  ##job_submit script header
+  if ( $SUPER_PLATFORM == 'cheyenne' ) then
+    cat >> gen_pert_${n}.csh << EOF
 #!/bin/csh
 #PBS -N gen_pert_${n}
 #PBS -j oe
@@ -95,10 +98,23 @@ EOF
 #PBS -q ${CFILTER_QUEUE}
 #PBS -l select=${CFILTER_NODES}:ncpus=${CFILTER_PROCS}:mpiprocs=${CFILTER_MPI}
 #PBS -l walltime=${CFILTER_TIME}
-cd ${PERT_BANK_DIR}/mem_${n}
-mpirun ./da_wrfvar.exe >& output.wrfvar
-mv wrfvar_output wrfinput_d01
+EOF
+  else if ( $SUPER_PLATFORM == 'stampede2' ) then
+    cat >> gen_pert_${n}.csh << EOF
+#!/bin/csh
+#SBATCH -J gen_pert_${n}
+#SBATCH -A ${CNCAR_GAU_ACCOUNT}
+#SBATCH -p ${CFILTER_QUEUE}
+#SBATCH -n ${CFILTER_PROCS} -N ${CFILTER_NODES}
+#SBATCH -t ${CFILTER_TIME}
+EOF
+  endif
 
+  ##job_submit script execution commands
+  cat >> gen_pert_${n}.csh << EOF
+cd ${PERT_BANK_DIR}/mem_${n}
+${MPIRUN} ./da_wrfvar.exe >& output.wrfvar
+mv wrfvar_output wrfinput_d01
 # extract only the fields that are updated by wrfvar, then diff to generate the pert file for this member
 ncks -h -F -A -a -v U,V,T,QVAPOR,MU fg orig_data.nc
 ncks -h -F -A -a -v U,V,T,QVAPOR,MU wrfinput_d01 pert_data.nc
@@ -107,7 +123,8 @@ mv pert_bank_mem_${n}.nc ${PERT_BANK_DIR}/pert_bank_mem_${n}.nc
 rm orig_data.nc pert_data.nc wrfinput_d01
 EOF
 
-  qsub gen_pert_${n}.csh
+  echo "running 3DVar to perturb wrfinput for member ${n}"
+  ${JOB_SUBMIT} gen_pert_${n}.csh
 
   @ n++
 end

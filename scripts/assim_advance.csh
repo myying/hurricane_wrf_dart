@@ -45,7 +45,7 @@ if ( $SUPER_PLATFORM == 'cheyenne' ) then
  ${gdate[2]}   ${gdate[1]}
 $yyyy $mm $dd $hh $nn $ss
            $domains
- mpirun  ./wrf.exe
+ ${MPIRUN}  ./wrf.exe
 EOF
 endif
 

@@ -57,15 +57,16 @@ set increment_vars_a = ( U V PH T MU QVAPOR QCLOUD QRAIN QICE QSNOW QGRAUP \
 set OBS_VERIF_DAYS      = 7
 
 #### supercomputing parameters
-#  Generic queuing system parameters
-set SUPER_PLATFORM      = cheyenne  #yellowstone
-
-#  CHARGE ACCOUNTS
-set CNCAR_GAU_ACCOUNT   = P54048000
-set CFILTER_QUEUE       = regular
+##  Generic queuing system parameters
+##  Michael Ying: change these accordingly for your super computing environment
+set SUPER_PLATFORM      = cheyenne    ##stampede2
+set JOB_SUBMIT          = qsub        ##sbatch
+set MPIRUN              = mpirun      ##ibrun
+set CNCAR_GAU_ACCOUNT   = P54048000   ##TG-ATM090042
+set CFILTER_QUEUE       = regular     ##normal
 set CFILTER_TIME        = 01:00:00
 set CFILTER_NODES       = 4
-set CFILTER_PROCS       = 32
+set CFILTER_PROCS       = 32          ##64
 set CFILTER_MPI         = 32
 set CADVANCE_QUEUE       = regular
 set CADVANCE_TIME        = 01:00:00

@@ -88,7 +88,7 @@ while ( 1 == 1 ) ##outermost loop
 
   #if ( $SUPER_PLATFORM == 'cheyenne' ) then
   #  set ic_queue = "regular"
-  #  set sub_command = "qsub -l select=1:ncpus=2:mpiprocs=36:mem=5GB -l walltime=00:03:00 -q ${ic_queue} -A ${CNCAR_GAU_ACCOUNT} -j oe -N icgen "
+  #  set sub_command = "${JOB_SUBMIT} -l select=1:ncpus=2:mpiprocs=36:mem=5GB -l walltime=00:03:00 -q ${ic_queue} -A ${CNCAR_GAU_ACCOUNT} -j oe -N icgen "
   #endif
   #echo "this platform is $SUPER_PLATFORM and the job submission command is $sub_command"
   set n = 1
@@ -185,7 +185,10 @@ while ( 1 == 1 ) ##outermost loop
   ### generate run script for filter
   if ( -e assimilate.csh )  ${REMOVE} assimilate.csh
   touch assimilate.csh
-  cat >> assimilate.csh << EOF
+
+  ##job_submit script header
+  if ( $SUPER_PLATFORM == 'cheyenne' ) then
+    cat >> assimilate.csh << EOF
 #!/bin/csh
 #PBS -N assimilate_${datea}
 #PBS -j oe
@@ -193,16 +196,27 @@ while ( 1 == 1 ) ##outermost loop
 #PBS -l walltime=${CFILTER_TIME}
 #PBS -q ${CFILTER_QUEUE}
 #PBS -l select=${CFILTER_NODES}:ncpus=${CFILTER_PROCS}:mpiprocs=${CFILTER_MPI}
-setenv TMPDIR /glade/scratch/$USER/temp
-mkdir -p $TMPDIR
+EOF
+  else if ( $SUPER_PLATFORM == 'stampede2' ) then
+    cat >> assimilate.csh << EOF
+#!/bin/csh
+#SBATCH -J assimilate_${datea}
+#SBATCH -A ${CNCAR_GAU_ACCOUNT}
+#SBATCH -p ${CFILTER_QUEUE}
+#SBATCH -n ${CFILTER_PROCS} -N ${CFILTER_NODES}
+#SBATCH -t ${CFILTER_TIME}
+EOF
+  endif
 
+  ##job_submit script execution commands
+  cat >> assimilate.csh << EOF
 cd ${RUN_DIR}
-mpirun ${DART_DIR}/models/wrf/work/filter
+${MPIRUN} ${DART_DIR}/models/wrf/work/filter
 if ( -e ${RUN_DIR}/obs_seq.final ) touch ${RUN_DIR}/filter_done
 EOF
 
   echo "running filter"
-  qsub assimilate.csh
+  ${JOB_SUBMIT} assimilate.csh
 
   cd $RUN_DIR   # make sure we are still in the right place
 
@@ -293,7 +307,10 @@ EOF
     ### generate run script for each member
     if ( -e assim_advance_${n}.csh )  ${REMOVE} assim_advance_${n}.csh
     touch assim_advance_${n}.csh
-    cat >> assim_advance_${n}.csh << EOF
+
+    ##job_submit script header
+    if ( $SUPER_PLATFORM == 'cheyenne' ) then
+      cat >> assim_advance_${n}.csh << EOF
 #!/bin/csh
 #PBS -N assim_advance_${n}
 #PBS -j oe
@@ -301,11 +318,26 @@ EOF
 #PBS -l walltime=${CADVANCE_TIME}
 #PBS -q ${CADVANCE_QUEUE}
 #PBS -l select=${CADVANCE_NODES}:ncpus=${CADVANCE_PROCS}:mpiprocs=${CADVANCE_MPI}
+EOF
+    else if ( $SUPER_PLATFORM == 'stampede2' ) then
+      cat >> assim_advance_${n}.csh << EOF
+#!/bin/csh
+#SBATCH -J assim_advance_${n}
+#SBATCH -A ${CNCAR_GAU_ACCOUNT}
+#SBATCH -p ${CADVANCE_QUEUE}
+#SBATCH -n ${CADVANCE_PROCS} -N ${CADVANCE_NODES}
+#SBATCH -t ${CADVANCE_TIME}
+EOF
+    endif
+
+    ##job_submit script execution commands
+    cat >> assim_advance_${n}.csh << EOF
 cd $RUN_DIR
 ${SHELL_SCRIPTS_DIR}/assim_advance.csh ${datea} ${n} ${SHELL_SCRIPTS_DIR}/$paramfile
 EOF
 
-    qsub assim_advance_${n}.csh
+    echo "running forecast step for member ${n}"
+    ${JOB_SUBMIT} assim_advance_${n}.csh
     @ n++
   end
 
@@ -327,7 +359,7 @@ EOF
         ###  the qstat format is for cheyenne:
         if ( `qstat -f |grep "Job_Name = assim_advance_${n}" |wc -l` == 0 ) then
           echo "assim_advance_${n} is missing from the queue"
-          qsub assim_advance_${n}.csh
+          ${JOB_SUBMIT} assim_advance_${n}.csh
         endif
         sleep 15
       end

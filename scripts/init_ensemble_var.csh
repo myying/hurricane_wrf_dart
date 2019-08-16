@@ -58,7 +58,10 @@ EOF
   ### generate run script for each member
   if ( -e first_adv_${n}.csh )  ${REMOVE} first_adv_${n}.csh
   touch first_adv_${n}.csh
-  cat >> first_adv_${n}.csh << EOF
+
+  ##job_submit script header
+  if ( $SUPER_PLATFORM == 'cheyenne' ) then
+    cat >> first_adv_${n}.csh << EOF
 #!/bin/csh
 #PBS -N first_adv_${n}
 #PBS -j oe
@@ -66,8 +69,21 @@ EOF
 #PBS -l walltime=${CADVANCE_TIME}
 #PBS -q ${CADVANCE_QUEUE}
 #PBS -l select=${CADVANCE_NODES}:ncpus=${CADVANCE_PROCS}:mpiprocs=${CADVANCE_MPI}
-
 module load ncl/6.6.2
+EOF
+  else if ( $SUPER_PLATFORM == 'stampede2' ) then
+    cat >> first_adv_${n}.csh << EOF
+#!/bin/csh
+#SBATCH -J first_adv_${n}
+#SBATCH -A ${CNCAR_GAU_ACCOUNT}
+#SBATCH -p ${CADVANCE_QUEUE}
+#SBATCH -n ${CADVANCE_QUEUE} -N ${CADVANCE_NODES}
+#SBATCH -t ${CADVANCE_TIME}
+EOF
+  endif
+
+  ###job_submit script execute commands
+  cat >> first_adv_${n}.csh << EOF
 cd ${RUN_DIR}/advance_temp${n}
 chmod +x nclrun3.out
 ./nclrun3.out >& add_perts.out
@@ -76,7 +92,7 @@ cd $RUN_DIR
 ${SHELL_SCRIPTS_DIR}/first_advance.csh $initial_date $n ${SHELL_SCRIPTS_DIR}/$paramfile
 EOF
 
-  qsub first_adv_${n}.csh
+  ${JOB_SUBMIT} first_adv_${n}.csh
 
   @ n++
 
