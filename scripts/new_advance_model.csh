@@ -57,7 +57,7 @@ set paramfile = $4
 # MULTIPLE DOMAINS - pass along the # of domains here?  We just default a value of 1 for the second variable, process is the ensemble member #
 source $paramfile
 module load nco
-module load ncl/6.6.2
+if ( $SUPER_PLATFORM == 'cheyenne' )  module load ncl/6.6.2
 
 # Setting to vals > 0 saves wrfout files,
 # will save all member output files <= to this value
