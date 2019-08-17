@@ -39,15 +39,13 @@ if ( -e $RUN_DIR/advance_temp${emember}/wrf.info ) then
   ${REMOVE} $RUN_DIR/advance_temp${emember}/wrf.info
 endif
 touch wrf.info
-if ( $SUPER_PLATFORM == 'cheyenne' ) then
-  cat >! $RUN_DIR/advance_temp${emember}/wrf.info << EOF
+cat >! $RUN_DIR/advance_temp${emember}/wrf.info << EOF
  ${gdatef[2]}  ${gdatef[1]}
  ${gdate[2]}   ${gdate[1]}
 $yyyy $mm $dd $hh $nn $ss
            $domains
  ${MPIRUN}  ./wrf.exe
 EOF
-endif
 
 cd $RUN_DIR
 echo $emember                      >! ${RUN_DIR}/filter_control${icnum}
