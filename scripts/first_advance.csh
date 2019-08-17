@@ -15,11 +15,7 @@ source $paramfile
 set start_time = `date +%s`
 echo "host is " `hostname`
 
-mkdir -p ${RUN_DIR}
-cd ${RUN_DIR}
-
-${COPY} ${TEMPLATE_DIR}/input.nml input.nml
-sleep 10
+cd ${TEMPLATE_DIR}
 set gdate = (`echo $datea 0 -g | ${DART_DIR}/models/wrf/work/advance_time`)
 set gdatef = (`echo $datea $ASSIM_INT_HOURS -g | ${DART_DIR}/models/wrf/work/advance_time`)
 set yyyy  = `echo $datea | cut -b1-4`
@@ -28,6 +24,9 @@ set dd    = `echo $datea | cut -b7-8`
 set hh    = `echo $datea | cut -b9-10`
 set nn    = "00"
 set ss    = "00"
+
+mkdir -p ${RUN_DIR}
+cd ${RUN_DIR}
 
 echo $start_time >! ${RUN_DIR}/start_member_${emember}
 

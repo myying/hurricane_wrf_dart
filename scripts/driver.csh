@@ -28,9 +28,6 @@ set paramfile = $3
 source $paramfile
 module load nco
 
-mkdir -p $RUN_DIR
-cd $RUN_DIR
-
 setenv restore 1   # set the restore variable
 echo 'starting a restore'
 
@@ -42,12 +39,15 @@ while ( 1 == 1 ) ##outermost loop
      exit
   endif
 
-  ${COPY} ${TEMPLATE_DIR}/input.nml input.nml
+  cd ${TEMPLATE_DIR}
   set datep  = `echo $datea -${ASSIM_INT_HOURS}   | ${DART_DIR}/models/wrf/work/advance_time`
   set gdate  = `echo $datea 0 -g                  | ${DART_DIR}/models/wrf/work/advance_time`
   set gdatef = `echo $datea ${ASSIM_INT_HOURS} -g | ${DART_DIR}/models/wrf/work/advance_time`
   set wdate  = `echo $datea 0 -w                  | ${DART_DIR}/models/wrf/work/advance_time`
   set hh     = `echo $datea | cut -b9-10`
+
+  mkdir -p $RUN_DIR
+  cd $RUN_DIR
 
   echo 'ready to check inputs'
   set domains = ${NUM_DOMAINS}   # from the param file

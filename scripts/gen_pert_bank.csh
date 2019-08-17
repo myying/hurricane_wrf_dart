@@ -16,10 +16,7 @@ source $paramfile
 
 module load nco
 
-mkdir -p ${PERT_BANK_DIR}
-cd ${PERT_BANK_DIR}
-${COPY} ${TEMPLATE_DIR}/input.nml input.nml
-### get a wrfdate and parse
+cd ${TEMPLATE_DIR}
 set gdate  = (`echo $datea 0h -g | ${DART_DIR}/models/wrf/work/advance_time`)
 set gdatef = (`echo $datea ${ASSIM_INT_HOURS}h -g | ${DART_DIR}/models/wrf/work/advance_time`)
 set wdate  =  `echo $datea 0h -w | ${DART_DIR}/models/wrf/work/advance_time`
@@ -27,6 +24,9 @@ set yyyy   = `echo $datea | cut -b1-4`
 set mm     = `echo $datea | cut -b5-6`
 set dd     = `echo $datea | cut -b7-8`
 set hh     = `echo $datea | cut -b9-10`
+
+mkdir -p ${PERT_BANK_DIR}
+cd ${PERT_BANK_DIR}
 
 set n = 1
 while ( $n <= $NUM_PERT )

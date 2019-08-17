@@ -18,11 +18,8 @@ set initial_date = ${1}
 set paramfile    = ${2}
 source $paramfile
 
-mkdir -p $RUN_DIR
-cd $RUN_DIR
-
 ## get dates
-${COPY} ${TEMPLATE_DIR}/input.nml input.nml
+cd ${TEMPLATE_DIR}
 set gdate  = (`echo $initial_date 0h -g | ${DART_DIR}/models/wrf/work/advance_time`)
 set gdatef = (`echo $initial_date ${ASSIM_INT_HOURS}h -g | ${DART_DIR}/models/wrf/work/advance_time`)
 set wdate  =  `echo $initial_date 0h -w | ${DART_DIR}/models/wrf/work/advance_time`
@@ -30,6 +27,9 @@ set yyyy   = `echo $initial_date | cut -b1-4`
 set mm     = `echo $initial_date | cut -b5-6`
 set dd     = `echo $initial_date | cut -b7-8`
 set hh     = `echo $initial_date | cut -b9-10`
+
+mkdir -p $RUN_DIR
+cd $RUN_DIR
 
 ${REMOVE} ${RUN_DIR}/WRF
 ${LINK} ${OUTPUT_DIR}/${initial_date} WRF

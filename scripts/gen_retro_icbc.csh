@@ -40,10 +40,12 @@ while ( 1 == 1 )
 
   if ( ! -d ${OUTPUT_DIR}/${datea} )  mkdir -p ${OUTPUT_DIR}/${datea}
 
-  ${COPY} ${TEMPLATE_DIR}/input.nml input.nml
+  cd ${TEMPLATE_DIR}
   set start_date = `echo $datea 0 -w | ${DART_DIR}/models/wrf/work/advance_time`
   set end_date   = `echo $datea 6 -w | ${DART_DIR}/models/wrf/work/advance_time`
   echo $start_date
+
+  cd $ICBC_DIR
 
   ## generate namelist.wps
   ${REMOVE} script.sed

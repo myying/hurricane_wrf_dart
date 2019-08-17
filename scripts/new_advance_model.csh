@@ -207,11 +207,11 @@ EOF
 
   set dn = 1
   while ( $dn <= $num_domains )
-    set dchar = `echo $dn + 100 | bc | cut -b2-3` 
+    set dchar = `echo $dn + 100 | bc | cut -b2-3`
     set icnum = `echo $ensemble_member + 10000 | bc | cut -b2-5`
     set this_file = filter_restart_d${dchar}.${icnum}
-    ncks -A -v ${stuff_str} ../${this_file} wrfinput_d${dchar}    #MUTLIPLE DOMAINS - input file is incomplete file name?
-    @ dn ++  #
+    ncks -A -v ${stuff_str} ../${this_file} wrfinput_d${dchar}
+    @ dn ++
   end
   #  Move and remove unnecessary domains    MULTIPLE DOMAINS - this problably needs to be removed to avoid confusion
   #if ( -e ${RUN_DIR}/moving_domain_info ) then
@@ -590,7 +590,7 @@ EOF
     endif
 
     if ( -e ${RUN_DIR}/append_precip_to_diag ) then
-      set dn = 1  ;  which ncks >& /dev/null
+      set dn = 1
       while ( $dn <= $num_domains )
         ncks -h -O -F -v RAINC,RAINNC wrfout_d0${dn}_${END_STRING} wrf_precip.nc
         ${MOVE} wrf_precip.nc ${RUN_DIR}/wrf_precip_d0${dn}_${END_STRING}_${ensemble_member}
