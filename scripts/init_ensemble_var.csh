@@ -79,6 +79,7 @@ EOF
 #SBATCH -p ${CADVANCE_QUEUE}
 #SBATCH -n ${CADVANCE_PROCS} -N ${CADVANCE_NODES}
 #SBATCH -t ${CADVANCE_TIME}
+#SBATCH -o first_adv_${n}.o%j
 EOF
   endif
 

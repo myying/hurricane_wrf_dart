@@ -23,8 +23,8 @@
 ########################################################################
 #### Cleaned up and modified by Michael Ying 2019
 set datea = $1
-set datefnl = 2015102300
-set paramfile = $2
+set datefnl = $2
+set paramfile = $3
 source $paramfile
 module load nco
 
@@ -36,8 +36,8 @@ echo 'starting a restore'
 
 while ( 1 == 1 ) ##outermost loop
 
+  ${REMOVE} ${RUN_DIR}/ABORT_RETRO
   if ( ! -d ${OUTPUT_DIR}/${datea} && $restore == 1 ) then
-     ${REMOVE} ${RUN_DIR}/ABORT_RETRO
      echo 'exiting because output directory does not exist and this is a restore'
      exit
   endif
@@ -205,6 +205,7 @@ EOF
 #SBATCH -p ${CFILTER_QUEUE}
 #SBATCH -n ${CFILTER_PROCS} -N ${CFILTER_NODES}
 #SBATCH -t ${CFILTER_TIME}
+#SBATCH -o assimilate_${datea}.o%j
 EOF
   endif
 
@@ -299,8 +300,11 @@ EOF
     echo "past the inflation file moves"
   endif   # adaptive_inflation file moves
 
-  echo "ready to integrate ensemble members"
+  ###  Compute Diagnostic Quantities
+  if ( -e obs_diag.log ) ${REMOVE} obs_diag.log
+  ${SHELL_SCRIPTS_DIR}/diagnostics_obs.csh $datea ${SHELL_SCRIPTS_DIR}/$paramfile >& ${RUN_DIR}/obs_diag.log &
 
+  echo "ready to integrate ensemble members"
   #  Integrate ensemble members to next analysis time
   set n = 1
   while ( $n <= $NUM_ENS )
@@ -327,6 +331,7 @@ EOF
 #SBATCH -p ${CADVANCE_QUEUE}
 #SBATCH -n ${CADVANCE_PROCS} -N ${CADVANCE_NODES}
 #SBATCH -t ${CADVANCE_TIME}
+#SBATCH -o assim_advance_${n}.o%j
 EOF
     endif
 
@@ -340,10 +345,6 @@ EOF
     ${JOB_SUBMIT} assim_advance_${n}.csh
     @ n++
   end
-
-  ###  Compute Diagnostic Quantities
-  if ( -e obs_diag.log ) ${REMOVE} obs_diag.log
-  ${SHELL_SCRIPTS_DIR}/diagnostics_obs.csh $datea ${SHELL_SCRIPTS_DIR}/$paramfile >& ${RUN_DIR}/obs_diag.log &
 
   ###  check to see if all of the ensemble members have advanced
   cd $RUN_DIR
@@ -390,7 +391,7 @@ EOF
     ${MOVE} assim_advance_${n}.o*              ${OUTPUT_DIR}/${datea}/logs/.
     ${MOVE} WRFOUT/wrf.out_${gdatef[1]}_${gdatef[2]}_${n} ${OUTPUT_DIR}/${datea}/logs/.
     ${MOVE} WRFIN/wrfinput_d01_${n}.gz         ${OUTPUT_DIR}/${datea}/WRFIN/.
-    ${MOVE} prior_d01.${ensstring}            ${OUTPUT_DIR}/${datea}/PRIORS/.
+    ${MOVE} prior_d01.${ensstring}             ${OUTPUT_DIR}/${datea}/PRIORS/.
     ${REMOVE} start_member_${n} done_member_${n} filter_restart_d01.${ensstring}
     if ( -e assim_advance_mem${n}.csh )  ${REMOVE} assim_advance_mem${n}.csh
 

@@ -107,6 +107,7 @@ EOF
 #SBATCH -p ${CFILTER_QUEUE}
 #SBATCH -n ${CFILTER_PROCS} -N ${CFILTER_NODES}
 #SBATCH -t ${CFILTER_TIME}
+#SBATCH -o gen_pert_${n}.o%j
 EOF
   endif
 
