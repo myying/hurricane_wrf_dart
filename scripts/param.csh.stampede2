@@ -59,9 +59,10 @@ set OBS_VERIF_DAYS      = 7
 
 #### supercomputing parameters
 #  Generic queuing system parameters
-set SUPER_PLATFORM      = stampede2  #yellowstone
-set JOB_SUBMIT = sbatch
-set MPIRUN  = ibrun
+set SUPER_PLATFORM      = stampede2
+set JOB_SUBMIT          = sbatch
+set MPIRUN              = ibrun
+set LIST_MPI_JOB        = 'squeue -h -u ${USER} -o %j'
 
 #  CHARGE ACCOUNTS
 set CNCAR_GAU_ACCOUNT   = TG-ATM090042
