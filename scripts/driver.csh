@@ -357,7 +357,7 @@ EOF
       ###  Wait for the script to start
       while ( ! -e ${RUN_DIR}/start_member_${n} )
         ###MichaelYing: if the job failed, try resubmitting it
-        if ( `${LIST_MPI_JOBS} |grep assim_advance_${n} |wc -l` == 0 ) then
+        if ( `${LIST_MPI_JOB} |grep assim_advance_${n} |wc -l` == 0 ) then
           echo "assim_advance_${n} is missing from the queue"
           ${JOB_SUBMIT} assim_advance_${n}.csh
         endif
