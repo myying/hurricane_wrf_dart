@@ -62,7 +62,7 @@ set OBS_VERIF_DAYS      = 7
 set SUPER_PLATFORM      = stampede2
 set JOB_SUBMIT          = sbatch
 set MPIRUN              = ibrun
-set LIST_MPI_JOB        = 'squeue -h -u ${USER} -o %j'
+set LIST_MPI_JOB        = 'squeue -h -u '${USER}' -o %j'
 
 #  CHARGE ACCOUNTS
 set CNCAR_GAU_ACCOUNT   = TG-ATM090042
