@@ -135,40 +135,39 @@ jcdfi_penalty=1000,
 &namelist_quilt
 /
 
- &time_control
- run_days                            = 0,
- run_hours                           = 9,
- run_minutes                         = 0,
- run_seconds                         = 0,
- start_year                          = 2015, 2015, 2015,
- start_month                         = 10,   10,   10,
- start_day                           = 21,   21,   21,
- start_hour                          = 12,   12,   12,
- start_minute                        = 00,   00,   00,
- start_second                        = 00,   00,   00,
- end_year                            = 2015, 2015, 2015,
- end_month                           = 10,   10,   10,
- end_day                             = 21,   21,   21,
- end_hour                            = 21,   21,   21,
- end_minute                          = 00,   00,   00,
- end_second                          = 00,   00,   00,
- interval_seconds                    = 21600
- input_from_file                     = .true.,.true.,.true.,
- history_interval                    = 60,   60,   60,
- frames_per_outfile                  = 1, 1, 1,
- restart                             = .false.,
- restart_interval                    = 1440,
- io_form_history                     = 2
- io_form_restart                     = 2
- io_form_input                       = 2
- io_form_boundary                    = 2
- debug_level                         = 0
-
-
- /
+&time_control
+run_days                            = 0,
+run_hours                           = 9,
+run_minutes                         = 0,
+run_seconds                         = 0,
+start_year                          = 2015, 2015, 2015,
+start_month                         = 10,   10,   10,
+start_day                           = 21,   21,   21,
+start_hour                          = 12,   12,   12,
+start_minute                        = 00,   00,   00,
+start_second                        = 00,   00,   00,
+end_year                            = 2015, 2015, 2015,
+end_month                           = 10,   10,   10,
+end_day                             = 21,   21,   21,
+end_hour                            = 21,   21,   21,
+end_minute                          = 00,   00,   00,
+end_second                          = 00,   00,   00,
+interval_seconds                    = 21600
+input_from_file                     = .true.,.true.,.true.,
+history_interval                    = 60,   60,   60,
+frames_per_outfile                  = 1, 1, 1,
+restart                             = .false.,
+restart_interval                    = 1440,
+io_form_history                     = 2
+io_form_restart                     = 2
+io_form_input                       = 2
+io_form_boundary                    = 2
+debug_level                         = 0
+/
 
 &domains
-time_step=30,
+max_dom = 1,
+time_step = 30,
 time_step_fract_num                 = 0,
 time_step_fract_den                 = 1,
 time_step_dfi                       = 90,
@@ -182,14 +181,10 @@ step_to_output_time                 = .true.,
 adaptation_domain                   = 1,
 use_adaptive_time_step              = .false.,
 use_adaptive_time_step_dfi          = .false.,
-max_dom=1,
 lats_to_mic                         = 0,
-s_we                                = 1,     1,     1,     1,
 e_we       = 501,361,361,501,
 e_sn       = 402,361,361,298,
-s_sn                                = 1,     1,     1,     1,
 e_vert     = 43,43,43,43,
-s_vert                              = 1,     1,     1,     1,
 dx         = 9000,3000,1000,1000,
 dy         = 9000,3000,1000,1000,
 grid_id    = 1,2,3,4,
@@ -199,9 +194,6 @@ parent_time_step_ratio = 1,3,3,3,
 i_parent_start = 1,257,121,100,
 j_parent_start = 1,104,121,100,
 feedback=1,
-time_to_move = 0,
-track_level = 70000,
-corral_dist = 8, 8, 120, 98,
 smooth_option=0,
 num_metgrid_levels=27,
 p_top_requested=1000,
@@ -235,7 +227,6 @@ qv_min_value                        = 1.E-6,
 eta_levels                          = 1.0,.9919699,.9827400,.9721600,.9600599,.9462600,.9306099,.9129300,.8930600,.8708600,.8462000,.8190300,.7893100,.7570800,.7224600,.6856500,.6469100,.6066099,.5651600,.5230500,.4807700,.4388600,.3978000,.3580500,.3200099,.2840100,.2502900,.2190100,.1902600,.1640600,.1403600,.1190600,.1000500,.0831600,.0682400,.0551200,.0436200,.0335700,.0248200,.0172200,.0106300,.0049200,.0000000,
 /
 
-
 &physics
 mp_physics         = 6,6,6,6,
 ra_lw_physics      = 1,1,1,1,
@@ -265,7 +256,6 @@ sf_ocean_physics   = 3
 isftcflx           = 1,
 /
 
-
 &fdda
 /
 
@@ -294,21 +284,17 @@ use_baseparam_fr_nml = .true.
 /
 
 &bdy_control
- spec_bdy_width                      = 5,
- spec_zone                           = 1,
- relax_zone                          = 4,
- specified                           = .true., .false.,.false.,
- nested                              = .false., .true., .true.,
+spec_bdy_width                      = 5,
+spec_zone                           = 1,
+relax_zone                          = 4,
+specified                           = .true., .false.,.false.,
+nested                              = .false., .true., .true.,
 /
 
 &grib2
 /
 
 &namelist_quilt
- nio_tasks_per_group = 0,
- nio_groups = 1,
+nio_tasks_per_group = 0,
+nio_groups = 1,
 /
-
-
-
-

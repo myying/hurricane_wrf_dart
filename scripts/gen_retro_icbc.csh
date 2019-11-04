@@ -27,25 +27,24 @@ source $paramfile
 mkdir -p $ICBC_DIR
 cd $ICBC_DIR
 
+ln -fs ${TEMPLATE_DIR}/input.nml .  ###must have this for advance_time to work
+
 ##run geogrid.exe
 echo "generating geo_em files"
 cp ${TEMPLATE_DIR}/namelist.wps .
 mkdir -p $ICBC_DIR/geogrid
 ${LINK} ${WPS_SRC_DIR}/geogrid/GEOGRID.TBL.ARW $ICBC_DIR/geogrid/GEOGRID.TBL
 ${REMOVE} output.geogrid
-${WPS_SRC_DIR}/geogrid.exe >& output.geogrid
+#${WPS_SRC_DIR}/geogrid.exe >& output.geogrid
 
 while ( 1 == 1 )
   echo "generating wrfinput bdy files for $datea"
 
   if ( ! -d ${OUTPUT_DIR}/${datea} )  mkdir -p ${OUTPUT_DIR}/${datea}
 
-  cd ${TEMPLATE_DIR}
   set start_date = `echo $datea 0 -w | ${DART_DIR}/models/wrf/work/advance_time`
   set end_date   = `echo $datea 6 -w | ${DART_DIR}/models/wrf/work/advance_time`
   echo $start_date
-
-  cd $ICBC_DIR
 
   ## generate namelist.wps
   ${REMOVE} script.sed
@@ -144,7 +143,12 @@ EOF
 
     #  move output files to storage
     set gdate = (`echo $date1 0 -g | ${DART_DIR}/models/wrf/work/advance_time`)
-    ${MOVE} wrfinput_d01 ${OUTPUT_DIR}/${datea}/wrfinput_d01_${gdate[1]}_${gdate[2]}_mean
+    set dn = 1
+    while ( $dn <= ${NUM_DOMAINS} )
+      set dchar = `echo $dn + 100 | bc | cut -b2-3`
+      ${MOVE} wrfinput_d${dchar} ${OUTPUT_DIR}/${datea}/wrfinput_d${dchar}_${gdate[1]}_${gdate[2]}_mean
+      @ dn++
+    end
     if ( $n == 1 ) ${MOVE} wrfbdy_d01 ${OUTPUT_DIR}/${datea}/wrfbdy_d01_${gdatef[1]}_${gdatef[2]}_mean
 
     @ n++
