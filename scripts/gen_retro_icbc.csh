@@ -59,8 +59,8 @@ EOF
   sed -f script.sed ${TEMPLATE_DIR}/namelist.wps >! namelist.wps
 
   ## build grib file names - may need to change for other data sources. These are from RDA
-  set gribfile_a = ${GRIB_DATA_DIR}/${datea}/gdas1.fnl0p25.${datea}.f00.grib2.spasub.tao346029
-  set gribfile_b = ${GRIB_DATA_DIR}/${datea}/gdas1.fnl0p25.${datea}.f06.grib2.spasub.tao346029
+  set gribfile_a = ${GRIB_DATA_DIR}/gdas1.fnl0p25.${datea}.f00.grib2
+  set gribfile_b = ${GRIB_DATA_DIR}/gdas1.fnl0p25.${datea}.f06.grib2
   ${LINK} $gribfile_a GRIBFILE.AAA
   ${LINK} $gribfile_b GRIBFILE.AAB
   ${LINK} ${WPS_SRC_DIR}/ungrib/Variable_Tables/Vtable.${GRIB_SRC} Vtable

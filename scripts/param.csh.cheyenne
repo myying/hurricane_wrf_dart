@@ -37,7 +37,7 @@ set WPS_SRC_DIR       = /glade/work/mying/code/WPSV3.9_serial
 set VAR_SRC_DIR       = /glade/work/mying/code/WRFDAV3.9.1
 
 # for generating wrf template files
-set GRIB_DATA_DIR     = /glade/work/mying/data/Patricia/grib
+set GRIB_DATA_DIR     = /gpfs/fs1/collections/rda/data/ds083.3/2015/201510
 set GRIB_SRC          = GFS
 
 # list of variables for extraction and cycling
