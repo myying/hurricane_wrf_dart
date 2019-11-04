@@ -1,7 +1,8 @@
 A step-by-step guide to running the WRF/DART system:
+Yue (Michael) Ying 2019
 ----------------------------------------------------------
 
-Step 1: Compile WPS, WRF and WRFDA, DART/model/wrf/work
+Step 1: Compile WPS, WRF and WRFDA, DART/models/wrf/work
 
 Step 2: Specify scripts/param.csh configuration
   template/input.nml, namelist.input, namelist.wps
